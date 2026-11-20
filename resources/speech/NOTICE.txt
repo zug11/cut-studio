@@ -1,0 +1,12 @@
+CUT Studio's local speech helper uses whisper.cpp v1.9.5 (MIT).
+Source and tagged release: https://github.com/ggml-org/whisper.cpp/tree/v1.9.5
+The Apple Silicon binary includes the CPU and Accelerate backends. It can be rebuilt
+on a Mac from the release with CMake:
+  cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DGGML_NATIVE=OFF -DGGML_METAL=OFF -DWHISPER_BUILD_TESTS=OFF -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0
+  cmake --build build --config Release --target whisper-cli
+  strip -x build/bin/whisper-cli
+  codesign --force --sign - build/bin/whisper-cli
+The optional tiny multilingual model is based on OpenAI Whisper (MIT), converted
+by the whisper.cpp project. The app checks the downloaded model against its pinned
+SHA-256 digest. The model is downloaded on demand and stored outside the app.
+https://huggingface.co/ggerganov/whisper.cpp/blob/main/ggml-tiny.bin

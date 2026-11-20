@@ -1,0 +1,57 @@
+#!/bin/bash
+# Local stdio MCP launcher. Never write status messages to stdout.
+set -euo pipefail
+shopt -s nullglob
+CUT_RUNTIME_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+CUT_PRIOR_PATH="${PATH:-/usr/bin:/bin:/usr/sbin:/sbin}"
+CUT_USER_DIR="${HOME:-}"
+
+if [ ! -f "$CUT_RUNTIME_DIR/mcp.mjs" ]; then
+  printf '%s\n' 'The CUT Studio MCP runtime is missing. Reinstall the complete CUT Studio app.' >&2
+  exit 1
+fi
+
+CUT_NODE_CANDIDATES=()
+if [ -n "${CUT_NODE:-}" ]; then CUT_NODE_CANDIDATES+=("$CUT_NODE"); fi
+CUT_NODE_CANDIDATES+=(/opt/homebrew/bin/node /usr/local/bin/node)
+CUT_PATH_NODE="$(command -v node 2>/dev/null || true)"
+if [ -n "$CUT_PATH_NODE" ]; then CUT_NODE_CANDIDATES+=("$CUT_PATH_NODE"); fi
+if [ -n "$CUT_USER_DIR" ]; then
+  CUT_NODE_CANDIDATES+=(
+    "$CUT_USER_DIR/.volta/bin/node"
+    "$CUT_USER_DIR/.local/share/mise/shims/node"
+    "$CUT_USER_DIR/.asdf/shims/node"
+    "$CUT_USER_DIR"/.nvm/versions/node/*/bin/node
+  )
+fi
+CUT_NODE_BINARY=''
+for CUT_CANDIDATE in "${CUT_NODE_CANDIDATES[@]}"; do
+  if [ -x "$CUT_CANDIDATE" ] && "$CUT_CANDIDATE" -e 'process.exit(Number(process.versions.node.split(".")[0]) >= 22 ? 0 : 1)' >/dev/null 2>&1; then
+    CUT_NODE_BINARY="$CUT_CANDIDATE"
+    break
+  fi
+done
+if [ -z "$CUT_NODE_BINARY" ]; then
+  printf '%s\n' 'CUT Studio MCP requires Node.js 22 or later. Install Node.js from nodejs.org, or set CUT_NODE to its executable path.' >&2
+  exit 1
+fi
+
+# Finder and local MCP clients often inherit only the system directories.
+# Keep the tools used by renders and Premiere export discoverable as well.
+export PATH="$(dirname -- "$CUT_NODE_BINARY"):/opt/homebrew/bin:/usr/local/bin:/Library/Frameworks/Python.framework/Versions/Current/bin:$CUT_PRIOR_PATH"
+if [ -n "$CUT_USER_DIR" ]; then
+  export PATH="$PATH:$CUT_USER_DIR/.local/bin:$CUT_USER_DIR/.pyenv/shims"
+fi
+if [ -z "${CUT_FFMPEG:-}" ]; then
+  CUT_FOUND_FFMPEG="$(command -v ffmpeg 2>/dev/null || true)"
+  if [ -n "$CUT_FOUND_FFMPEG" ]; then export CUT_FFMPEG="$CUT_FOUND_FFMPEG"; fi
+fi
+if [ -z "${CUT_FFPROBE:-}" ]; then
+  CUT_FOUND_FFPROBE="$(command -v ffprobe 2>/dev/null || true)"
+  if [ -n "$CUT_FOUND_FFPROBE" ]; then export CUT_FFPROBE="$CUT_FOUND_FFPROBE"; fi
+fi
+if [ -z "${CUT_PYTHON:-}" ]; then
+  CUT_FOUND_PYTHON="$(command -v python3 2>/dev/null || true)"
+  if [ -n "$CUT_FOUND_PYTHON" ]; then export CUT_PYTHON="$CUT_FOUND_PYTHON"; fi
+fi
+exec "$CUT_NODE_BINARY" "$CUT_RUNTIME_DIR/mcp.mjs" "$@"

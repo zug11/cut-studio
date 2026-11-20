@@ -1,0 +1,26 @@
+// Set a track's layer after its name, or set layer on an individual clip.
+// Higher video layers appear above lower ones. Audio lanes are independent.
+film "Layer study" {
+  resolution 960x540
+  fps 24
+
+  track video "Picture" layer 1 {
+    clip "media/dawn.mp4" from 1s to 7s at 0s
+    clip "media/current.mp4" from 1s to 7s at 6s
+
+    clip "media/light.mp4" {
+      in 0s
+      out 4s
+      at 4s
+      layer 3
+      opacity 0.35
+    }
+  }
+
+  track audio "Score" layer 1 {
+    clip "media/tone-low.wav" { at 0s gain -6dB fade_in 1s fade_out 2s }
+  }
+  track audio "Accent" layer 2 {
+    clip "media/tone-high.wav" { at 3s gain -12dB fade_in 0.5s fade_out 1s }
+  }
+}

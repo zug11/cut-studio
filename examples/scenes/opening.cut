@@ -1,0 +1,11 @@
+// Both versions use this opening. Move the title by changing x or y.
+film "Opening" {
+  resolution 640x360
+  fps 24
+  track video "Picture" layer 1 {
+    clip "../media/dawn.mp4" as wide { in 1s out 3s at 0s }
+  }
+  track video "Type" layer 2 {
+    title "AFTER THE LIGHT" as opening_title { out 1.5s at wide.start x 0 y -28 scale 0.88 }
+  }
+}

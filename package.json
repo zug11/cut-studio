@@ -1,0 +1,192 @@
+{
+  "name": "cut-studio",
+  "displayName": "CUT Studio",
+  "description": "A local code-first film editor for Mac, with a live timeline, numbered layers, Premiere Pro projects and FFmpeg rendering.",
+  "version": "0.2.0",
+  "publisher": "cut-studio",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.96.0",
+    "node": ">=22"
+  },
+  "categories": [
+    "Programming Languages",
+    "Visualization",
+    "Other"
+  ],
+  "main": "./dist/extension.cjs",
+  "bin": {
+    "cut": "./dist/cli.cjs"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/parser.test.ts tests/time.test.ts tests/export.test.ts",
+    "sample": "node scripts/generate-sample.mjs",
+    "cut": "node dist/cli.cjs",
+    "package": "vsce package --no-dependencies --allow-missing-repository --no-rewrite-relative-links",
+    "vscode:prepublish": "npm run build",
+    "test:vscode": "npm run build && node scripts/vscode-smoke.mjs",
+    "studio": "npm start",
+    "start": "npm run build && node dist/server.cjs",
+    "studio:vscode": "npm run build && node scripts/open-studio.mjs",
+    "package:standalone": "npm run build && node scripts/package-standalone.mjs",
+    "package:mac": "npm run build && node scripts/package-mac.mjs"
+  },
+  "activationEvents": [
+    "onLanguage:cut",
+    "onCommand:cut.openPreview"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "cut",
+        "aliases": [
+          "CUT",
+          "cut"
+        ],
+        "extensions": [
+          ".cut"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "cut",
+        "scopeName": "source.cut",
+        "path": "./syntaxes/cut.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "cut.openPreview",
+        "title": "CUT: Open Video Monitor"
+      },
+      {
+        "command": "cut.check",
+        "title": "CUT: Check Film"
+      },
+      {
+        "command": "cut.timeline",
+        "title": "CUT: Show Timeline"
+      },
+      {
+        "command": "cut.preview",
+        "title": "CUT: Render Preview"
+      },
+      {
+        "command": "cut.render",
+        "title": "CUT: Render Film to MP4"
+      },
+      {
+        "command": "cut.renderRange",
+        "title": "CUT: Render Section to MP4"
+      },
+      {
+        "command": "cut.exportResolve",
+        "title": "CUT: Export DaVinci Resolve Project"
+      },
+      {
+        "command": "cut.exportPremiere",
+        "title": "CUT: Export Premiere Pro Project"
+      },
+      {
+        "command": "cut.exportXml",
+        "title": "CUT: Export Final Cut Pro 7 XML"
+      }
+    ],
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "cut-studio",
+          "title": "CUT Studio",
+          "icon": "media/cut.svg"
+        }
+      ]
+    },
+    "views": {
+      "cut-studio": [
+        {
+          "type": "webview",
+          "id": "cut.timelineView",
+          "name": "Timeline",
+          "contextualTitle": "CUT Studio"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "CUT Studio",
+      "properties": {
+        "cut.ffmpegPath": {
+          "type": "string",
+          "default": "ffmpeg",
+          "description": "Local FFmpeg executable path."
+        },
+        "cut.ffprobePath": {
+          "type": "string",
+          "default": "ffprobe",
+          "description": "Local FFprobe executable path."
+        },
+        "cut.autoPreview": {
+          "type": "boolean",
+          "default": true,
+          "description": "Render short preview segments after valid edits."
+        },
+        "cut.previewSegmentSeconds": {
+          "type": "number",
+          "default": 8,
+          "minimum": 1,
+          "maximum": 30,
+          "description": "Maximum duration of each cached preview segment."
+        }
+      }
+    }
+  },
+  "devDependencies": {
+    "@codemirror/autocomplete": "^6.20.4",
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/lint": "^6.9.7",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.15",
+    "@lezer/highlight": "^1.2.5",
+    "@modelcontextprotocol/client": "2.4.0",
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^22.10.0",
+    "@types/proper-lockfile": "^4.1.4",
+    "@types/vscode": "^1.96.0",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.1.0",
+    "esbuild": "^0.25.0",
+    "fast-xml-parser": "^5.12.0",
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.12"
+  },
+  "type": "module",
+  "overrides": {
+    "minimatch": "^11.0.1"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Syntax and code timelines work in Restricted Mode. Local media probing, preview playback and rendering require workspace trust.",
+      "restrictedConfigurations": [
+        "cut.ffmpegPath",
+        "cut.ffprobePath"
+      ]
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "CUT Studio processes local media files with FFmpeg."
+    }
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.4.0",
+    "@resvg/resvg-wasm": "2.6.2",
+    "proper-lockfile": "^4.1.2",
+    "zod": "4.6.7"
+  }
+}

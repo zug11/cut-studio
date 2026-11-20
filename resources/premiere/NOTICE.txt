@@ -1,0 +1,5 @@
+CUT Studio native Premiere writer
+Runtime library: py-premiere (MIT), Copyright 2026 Aurore Delaunay
+Upstream: https://github.com/Pouf/py-premiere
+Pinned commit: 38e72ef5d389f472183fb23c471f9c9eb79394f8
+The runtime ZIP includes unmodified Python modules needed for native project creation and parsing; no upstream media, fixtures, tests or command line tools are shipped.

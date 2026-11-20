@@ -1,0 +1,4 @@
+CUT Studio uses the MIT-licensed native Resolve 21 writer and neutral project template
+from https://github.com/Ersiter/pr2resolve at 61c8c9ec2a76496721718130f250c5b64fccd789.
+The bundled subset adds stereo timeline tracks and clip channel maps based on the
+stereo records in the supplied template. See LICENSE-pr2resolve.txt.

@@ -1,0 +1,44 @@
+// CUT Studio · an entirely generated, twelve-second film.
+// Run `npm run sample` once to create these local assets.
+film "Signal / Noise" {
+  resolution 960x540
+  fps 24
+
+  track video "Picture" {
+    clip "media/dawn.mp4" {
+      in 1s
+      out 7s
+      at 0s
+    }
+    // The same trim can be written on one line.
+    clip "media/current.mp4" from 1s to 7s at 6s
+  }
+
+  // Later video tracks are composited over earlier ones.
+  track video "Light leak" {
+    clip "media/light.mp4" {
+      in 0s
+      out 4s
+      at 4s
+      opacity 0.35
+    }
+  }
+
+  track audio "Low tone" {
+    clip "media/tone-low.wav" {
+      at 0s
+      gain -6dB
+      fade_in 1s
+      fade_out 2s
+    }
+  }
+
+  track audio "High tone" {
+    clip "media/tone-high.wav" {
+      at 3s
+      gain -12dB
+      fade_in 0.5s
+      fade_out 1s
+    }
+  }
+}

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.vsix
+.cut-cache/
+examples/media/
+examples/output/
+coverage/
+.DS_Store
+.vscode-test/
+output/
+.playwright-cli/

@@ -1,0 +1,9 @@
+// A single silent picture clip can be played straight from its source.
+// The monitor enforces these trim boundaries without a composite render.
+film "First light" {
+  resolution 960x540
+  fps 24
+  track video "Picture" {
+    clip "media/dawn.mp4" from 1s to 5s at 0s
+  }
+}

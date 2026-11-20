@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "CUT", "scopeName": "source.cut",
+  "patterns": [
+    { "name": "comment.line.double-slash.cut", "match": "//.*$|#.*$" },
+    { "name": "comment.block.cut", "begin": "/\\*", "end": "\\*/" },
+    { "name": "string.quoted.double.cut", "begin": "\"", "end": "\"", "patterns": [{ "name": "constant.character.escape.cut", "match": "\\\\." }] },
+    { "name": "keyword.control.cut", "match": "\\b(film|track|clip|scene|title|caption|as|after|from|to)\\b" },
+    { "name": "storage.type.cut", "match": "\\b(video|audio)\\b" },
+    { "name": "entity.other.attribute-name.cut", "match": "\\b(resolution|fps|in|out|at|layer|gain|opacity|x|y|scale|crop|duck|fade_in|fade_out)\\b" },
+    { "name": "constant.numeric.cut", "match": "(?<![\\w.])[+-]?(?:\\d+(?:\\.\\d+)?(?:h|m|s|f|dB)?)+(?:[:/x]\\d+(?:\\.\\d+)?)*" },
+    { "name": "punctuation.section.block.cut", "match": "[{}]" }
+  ]
+}

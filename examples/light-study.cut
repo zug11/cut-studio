@@ -1,0 +1,20 @@
+// Review reaction.start. Shorten the opening in scenes/opening.cut to move the join.
+// The voice leads the new picture by eight frames. The music stays pinned at zero.
+film "After the light" {
+  resolution 640x360
+  fps 24
+  scene "scenes/opening.cut" as entrance { at 0s }
+
+  track video "Picture" layer 1 {
+    clip "media/current.mp4" as reaction { in 1s out 4s after entrance }
+  }
+  track video "Subtitles" layer 2 {
+    caption "I knew the light would change." as line { out 36f at voice.start }
+  }
+  track audio "Voice" layer 1 {
+    clip "media/light-cue.wav" as voice { at reaction.start - 8f }
+  }
+  track audio "Score" layer 2 {
+    clip "media/tone-low.wav" as score { out 5s at 0s gain -12dB duck A1 -12dB fade_out 1s }
+  }
+}
